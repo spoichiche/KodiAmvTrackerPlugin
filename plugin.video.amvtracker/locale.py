@@ -5,7 +5,6 @@ import xbmcaddon
 class Locale():
     def getString(strid: str) -> str:
         res = xbmcaddon.Addon().getLocalizedString(Locale.STRINGS[strid])
-        xbmc.log("AmvTracker getString : " + str(xbmcaddon.Addon().getLocalizedString(32031)), xbmc.LOGINFO)
         return res
 
     def getFormatedString(strid: str, param: str) -> str:
@@ -16,7 +15,6 @@ class Locale():
     {
         "settings.database_path"                    : 32001
         ,"mainmenu.all_amvs"                        : 32002
-        ,"mainmenu.favorite_amvs"                   : 32032
         ,"mainmenu.custom_lists"                    : 32003
         ,"mainmenu.editors"                         : 32004
         ,"mainmenu.studios"                         : 32005
@@ -46,4 +44,6 @@ class Locale():
         ,"dialog.removed_from_custom_list_success"  : 32029
         ,"dialog.setted_rating_success"             : 32030
         ,"menu.editors_amv"                         : 32031
+        ,"mainmenu.favorite_amvs"                   : 32032
+        ,"dialog.rating_set_success"                : 32033
     }

@@ -23,6 +23,11 @@ def getUserSelectedList() -> str:
     select = xbmcgui.Dialog().select(Locale.getString("dialog.select_custom_list"), selectList)
     return "" if select == -1 else selectList[select]
 
+def getUserSelectedRating() -> str:
+    selectList = ("10", "9.5", "9", "8.5", "8", "7.5", "7", "6.5", "6", "5.5", "5", "4.5", "4", "3.5", "3", "2.5", "2", "1.5", "1", "0.5", "0")
+    select = xbmcgui.Dialog().select(Locale.getString("contextmenu.set_rating"), selectList)
+    return "" if select == -1 else selectList[select]
+
 if __name__ == '__main__':
     action = sys.argv[1]
     xbmc.log("AmvTracker scripts : dbpath = " + str(addon.getSetting('dbfilepath')), xbmc.LOGINFO)
@@ -51,3 +56,9 @@ if __name__ == '__main__':
         if listname != "":
             AmvTrackerDao.removeFromCustomList(amvId, listname)
             xbmcgui.Dialog().ok(addonName, Locale.getFormatedString("dialog.removed_from_custom_list_success", listname))
+    elif "setRating" == action:
+        amvId = sys.argv[2]
+        rating = getUserSelectedRating()
+        if rating != "":
+            AmvTrackerDao.setRating(amvId, float(rating))
+            xbmcgui.Dialog().ok(addonName, Locale.getString("dialog.rating_set_success"))

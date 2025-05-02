@@ -25,7 +25,6 @@ def format_url(**kwargs):
 
 def set_amv_sort_methods():
     xbmcplugin.setContent(HANDLE, 'musicvideos')
-    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_FULLPATH)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_TITLE)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_VIDEO_YEAR)
@@ -34,6 +33,7 @@ def set_amv_sort_methods():
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_STUDIO)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_VIDEO_RATING)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LASTPLAYED)
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_FULLPATH)
 
 def router(param_string):
     params = get_params(param_string)
@@ -142,6 +142,10 @@ def build_list_item_from_amv(amv: Amv):
     tags.setGenres(amv.getGenres())
     tags.setPlaycount(amv.get('play_count'))
     tags.setPlot(build_plot_info_string(amv))
+    
+    if amv.getUserRating() is not None and amv.getUserRating() != '':
+        tags.setRating(amv.getUserRating(), 1, "AmvTrackerRating", True)
+
     tags.addAvailableArtwork(get_thumbnail_path(amv.getThumbnailPath()), 'thumb')
 
     list_item.setArt({'thumb': get_thumbnail_path(amv.getThumbnailPath())})
@@ -162,6 +166,7 @@ def build_plot_info_string(amv: Amv) -> str:
         + ("[B]"+Locale.getString("amvinfo.song_genre")+" : [/B]"+amv.getSongGenre()+"[CR]" if amv.getSongGenre().strip() else "") \
         + ("[B]"+Locale.getString("amvinfo.date")+" : [/B]"+amv.getReleaseDate()+"[CR]" if amv.getReleaseDate().strip() else "") \
         + ("[B]"+Locale.getString("amvinfo.studio")+" : [/B]"+amv.getStudio()+"[CR]" if amv.getStudio().strip() else "") \
+        + ("[B]"+Locale.getString("amvinfo.user_rating")+" : [/B]"+str(amv.getUserRating())+" / 10[CR]" if str(amv.getUserRating()).strip() else "") \
         + ("[B]"+Locale.getString("amvinfo.animes")+" : [/B]"+animeList+"[CR]" if animeList.strip() else "") 
 
     return infoString
@@ -183,7 +188,11 @@ def build_amv_context_menu(amv: Amv):
         contextMenuList.append((Locale.getString("contextmenu.remove_from_favorites"), f"RunScript(plugin.video.amvtracker, removeFromFavorite, {amv.getId()})"))
     else:
         contextMenuList.append((Locale.getString("contextmenu.add_to_favorites"), f"RunScript(plugin.video.amvtracker, addToFavorite, {amv.getId()})"))
+    
     contextMenuList.append((Locale.getString("contextmenu.add_to_list"), f"RunScript(plugin.video.amvtracker, addToCustomLists, {amv.getId()})"))
+
+    contextMenuList.append((Locale.getString("contextmenu.set_rating"), f"RunScript(plugin.video.amvtracker, setRating, {amv.getId()})"))
+
     return contextMenuList
 
 if __name__ == '__main__':

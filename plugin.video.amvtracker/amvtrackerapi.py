@@ -20,6 +20,7 @@ AMV_PROPERTIES = {
     ,"play_count":16
     ,"local_file":17
     ,"favorite":18
+    ,"my_rating":19
 }
 
 class Amv(object):
@@ -66,6 +67,8 @@ class Amv(object):
         return self.rowData[15]
     def isFavorite(self) -> bool:
         return self.rowData[18] == 1
+    def getUserRating(self) -> float:
+        return self.rowData[19]
     
 
 class AmvResultList(object):
@@ -347,3 +350,8 @@ class AmvTrackerDao(object):
         with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
             cur = con.cursor()
             cur.execute("UPDATE sub_db_0 SET favorite = 0 WHERE video_id = ?", [amvId])
+    
+    def setRating(amvId: str, rating: float):
+        with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
+            cur = con.cursor()
+            cur.execute("UPDATE sub_db_0 SET my_rating = ? WHERE video_id = ?", [rating, amvId])

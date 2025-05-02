@@ -114,7 +114,7 @@ msgstr "Retirer de la liste"
 
 msgctxt "#32024"
 msgid "Set rating"
-msgstr "Noter"
+msgstr "Attribuer une note"
 
 msgctxt "#32025"
 msgid "Amv succesfully added to AmvTracker's favorite"
@@ -122,7 +122,7 @@ msgstr "Amv ajouté aux favoris AmvTracker avec succès"
 
 msgctxt "#32026"
 msgid "Amv succesfully removed from AmvTracker's favorite"
-msgstr "Amv retirer des favoris AmvTracker avec succès"
+msgstr "Amv retiré des favoris AmvTracker avec succès"
 
 msgctxt "#32027"
 msgid "Select a list"
@@ -134,8 +134,12 @@ msgstr "Amv ajouté à {} avec succès"
 
 msgctxt "#32029"
 msgid "Amv succesfully removed from {}"
-msgstr "Amv retirer de {} avec succès"
+msgstr "Amv retiré de {} avec succès"
 
 msgctxt "#32032"
 msgid "Favorite Amvs"
 msgstr "Favoris"
+
+msgctxt "#32033"
+msgid "New rating set succesfully"
+msgstr "Nouvelle note attribuée avec succès"

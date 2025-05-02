@@ -139,3 +139,7 @@ msgstr ""
 msgctxt "#32032"
 msgid "Favorite Amvs"
 msgstr ""
+
+msgctxt "#32033"
+msgid "New rating set succesfully"
+msgstr ""
