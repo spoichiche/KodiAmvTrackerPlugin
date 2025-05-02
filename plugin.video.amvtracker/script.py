@@ -9,6 +9,7 @@ import xbmcplugin
 import xbmc
 
 from amvtrackerapi import Amv, AmvResultList, AmvTrackerDao
+from locale import Locale
 
 xbmc.log("AmvTracker scripts : url = " + str(sys.argv), xbmc.LOGINFO)
 addon = xbmcaddon.Addon()
@@ -19,7 +20,7 @@ def getUserSelectedList() -> str:
     selectList = list()
     for amvList in amvLists:
         selectList.append(amvList[0])
-    select = xbmcgui.Dialog().select("Custom lists", selectList)
+    select = xbmcgui.Dialog().select(Locale.getString("dialog.select_custom_list"), selectList)
     return "" if select == -1 else selectList[select]
 
 if __name__ == '__main__':
@@ -31,22 +32,22 @@ if __name__ == '__main__':
     if "addToFavorite" == action:
         amvId = sys.argv[2]
         AmvTrackerDao.addAmvToFavorites(amvId)
-        xbmcgui.Dialog().ok(addonName, "Amv succesfully added to AmvTracker's favorite")
+        xbmcgui.Dialog().ok(addonName, Locale.getString("dialog.added_favorite_success"))
         xbmc.executebuiltin("Container.Refresh")
     elif "removeFromFavorite" == action:
         amvId = sys.argv[2]
         AmvTrackerDao.removeAmvFromFavorites(amvId)
-        xbmcgui.Dialog().ok(addonName, "Amv succesfully removed from AmvTracker's favorite")
+        xbmcgui.Dialog().ok(addonName, Locale.getString("dialog.removed_favorite_success"))
         xbmc.executebuiltin("Container.Refresh")
     elif "addToCustomLists" == action:
         amvId = sys.argv[2]
         listname = getUserSelectedList()
         if listname != "":
             AmvTrackerDao.addToCustomList(amvId, listname)
-            xbmcgui.Dialog().ok(addonName, f"Amv succesfully added to list : {listname}")
+            xbmcgui.Dialog().ok(addonName, Locale.getFormatedString("dialog.added_to_custom_list_success", listname))
     elif "removeFromCustomLists" == action:
         amvId = sys.argv[2]
         listname = getUserSelectedList()
         if listname != "":
             AmvTrackerDao.removeFromCustomList(amvId, listname)
-            xbmcgui.Dialog().ok(addonName, f"Amv succesfully removed from list : {listname}")
+            xbmcgui.Dialog().ok(addonName, Locale.getFormatedString("dialog.removed_from_custom_list_success", listname))

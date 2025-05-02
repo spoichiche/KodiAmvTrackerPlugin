@@ -9,6 +9,7 @@ import xbmcplugin
 import xbmc
 
 from amvtrackerapi import Amv, AmvResultList, AmvTrackerDao
+from locale import Locale
 
 URL = sys.argv[0]
 HANDLE = int(sys.argv[1])
@@ -43,45 +44,45 @@ def router(param_string):
     if not params:
         list_root_dir()
     elif 'list_amvs' == params['action']:
-        list_amv("All Amvs", AmvTrackerDao.getAllAmvs())
+        list_amv(Locale.getString("mainmenu.all_amvs"), AmvTrackerDao.getAllAmvs())
     elif 'list_favorites' == params['action']:
-        list_amv("Favorite Amvs", AmvTrackerDao.getAllFavorites())
+        list_amv(Locale.getString("mainmenu.favorite_amvs"), AmvTrackerDao.getAllFavorites())
     elif 'list_lists' == params['action']:
-        list_final_directories("Custom Lists", AmvTrackerDao.getCustomLists(), "list_list_amv", "")
+        list_final_directories(Locale.getString("mainmenu.custom_lists"), AmvTrackerDao.getCustomLists(), "list_list_amv", "")
     elif 'list_list_amv' == params['action']:
         list_amv(params['dirname'], AmvTrackerDao.getCustomListAmvs(params['dirname']))
     elif 'list_editors' == params['action']:
-        list_final_directories("Editors", AmvTrackerDao.getAllEditors(), "list_editor_amv", "DefaultMusicRoles.png")
+        list_final_directories(Locale.getString("mainmenu.editors"), AmvTrackerDao.getAllEditors(), "list_editor_amv", "DefaultMusicRoles.png")
     elif 'list_editor_amv' == params['action']:
-        list_amv(params['dirname']+"'s Amvs", AmvTrackerDao.getEditorAmvs(params['dirname']))
+        list_amv(params['dirname'], AmvTrackerDao.getEditorAmvs(params['dirname']))
     elif 'list_studios' == params['action']:
-        list_final_directories("Studios", AmvTrackerDao.getStudios(), "list_studio_amv", "DefaultStudios.png")
+        list_final_directories(Locale.getString("mainmenu.studios"), AmvTrackerDao.getStudios(), "list_studio_amv", "DefaultStudios.png")
     elif 'list_studio_amv' == params['action']:
-        list_amv(params['dirname']+"'s Amvs", AmvTrackerDao.getStudioAmvs(params['dirname']))
+        list_amv(params['dirname'], AmvTrackerDao.getStudioAmvs(params['dirname']))
     elif 'list_genres' == params['action']:
-        list_final_directories("Genres", AmvTrackerDao.getGenres(), "list_genre_amv", "DefaultGenre.png")
+        list_final_directories(Locale.getString("mainmenu.genres"), AmvTrackerDao.getGenres(), "list_genre_amv", "DefaultGenre.png")
     elif 'list_genre_amv' == params['action']:
-        list_amv(params['dirname']+" Amvs", AmvTrackerDao.getGenreAmvs(params['dirname']))
+        list_amv(params['dirname'], AmvTrackerDao.getGenreAmvs(params['dirname']))
     elif 'list_years' == params['action']:
-        list_final_directories("Years", AmvTrackerDao.getYears(), "list_year_amv", "DefaultYear.png")
+        list_final_directories(Locale.getString("mainmenu.years"), AmvTrackerDao.getYears(), "list_year_amv", "DefaultYear.png")
     elif 'list_year_amv' == params['action']:
-        list_amv(params['dirname']+"'s Amvs", AmvTrackerDao.getYearAmvs(params['dirname']))
+        list_amv(params['dirname'], AmvTrackerDao.getYearAmvs(params['dirname']))
     elif 'list_contests' == params['action']:
-        list_final_directories("Contests", AmvTrackerDao.getContests(), "list_contest_amv", "DefaultMusicTop100.png")
+        list_final_directories(Locale.getString("mainmenu.contests"), AmvTrackerDao.getContests(), "list_contest_amv", "DefaultMusicTop100.png")
     elif 'list_contest_amv' == params['action']:
-        list_amv(params['dirname']+" Amvs", AmvTrackerDao.getContestAmvs(params['dirname']))
+        list_amv(params['dirname'], AmvTrackerDao.getContestAmvs(params['dirname']))
     elif 'list_animes' == params['action']:
-        list_final_directories("Anime Sources", AmvTrackerDao.getAnimes(), "list_anime_amv", "DefaultTVShows.png")
+        list_final_directories(Locale.getString("mainmenu.anime_sources"), AmvTrackerDao.getAnimes(), "list_anime_amv", "DefaultTVShows.png")
     elif 'list_anime_amv' == params['action']:
-        list_amv(params['dirname']+" Amvs", AmvTrackerDao.getAnimeAmvs(params['dirname']))
+        list_amv(params['dirname'], AmvTrackerDao.getAnimeAmvs(params['dirname']))
     elif 'list_artists' == params['action']:
-        list_final_directories("Song Artists", AmvTrackerDao.getArtists(), "list_artist_amv", "DefaultArtist.png")
+        list_final_directories(Locale.getString("mainmenu.song_artists"), AmvTrackerDao.getArtists(), "list_artist_amv", "DefaultArtist.png")
     elif 'list_artist_amv' == params['action']:
-        list_amv(params['dirname']+" Amvs", AmvTrackerDao.getArtistAmvs(params['dirname']))
+        list_amv(params['dirname'], AmvTrackerDao.getArtistAmvs(params['dirname']))
     elif 'list_song_genres' == params['action']:
-        list_final_directories("Song Genres", AmvTrackerDao.getSongGenres(), "list_song_genre_amv", "DefaultMusicAlbums.png")
+        list_final_directories(Locale.getString("mainmenu.song_genres"), AmvTrackerDao.getSongGenres(), "list_song_genre_amv", "DefaultMusicAlbums.png")
     elif 'list_song_genre_amv' == params['action']:
-        list_amv(params['dirname']+" Amvs", AmvTrackerDao.getSongGenreAmvs(params['dirname']))
+        list_amv(params['dirname'], AmvTrackerDao.getSongGenreAmvs(params['dirname']))
 
 def icon_list_item(label, icon="", label2 = ""):
     liz = xbmcgui.ListItem(label=label)
@@ -90,17 +91,17 @@ def icon_list_item(label, icon="", label2 = ""):
     return liz
 
 def list_root_dir():
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_amvs"), icon_list_item("All Amvs", "DefaultMusicVideoTitle.png"), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_favorites"), icon_list_item("Favorites", "DefaultFavourites.png"), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_lists"), icon_list_item("Custom Lists", ""), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_editors"), icon_list_item("Editors", "DefaultDirector.png"), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_studios"), icon_list_item("Studios", "DefaultStudios.png"), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_genres"), icon_list_item("Genres", "DefaultGenre.png"), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_years"), icon_list_item("Years", "DefaultYear.png"), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_contests"), icon_list_item("Contests", "DefaultMusicTop100.png"), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_animes"), icon_list_item("Anime Sources", "DefaultTVShows.png"), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_artists"), icon_list_item("Song Artists", "DefaultArtist.png"), True)
-    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_song_genres"), icon_list_item("Song Genres", "DefaultMusicAlbums.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_amvs"), icon_list_item(Locale.getString("mainmenu.all_amvs"), "DefaultMusicVideoTitle.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_favorites"), icon_list_item(Locale.getString("mainmenu.favorite_amvs"), "DefaultFavourites.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_lists"), icon_list_item(Locale.getString("mainmenu.custom_lists"), ""), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_editors"), icon_list_item(Locale.getString("mainmenu.editors"), "DefaultDirector.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_studios"), icon_list_item(Locale.getString("mainmenu.studios"), "DefaultStudios.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_genres"), icon_list_item(Locale.getString("mainmenu.genres"), "DefaultGenre.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_years"), icon_list_item(Locale.getString("mainmenu.years"), "DefaultYear.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_contests"), icon_list_item(Locale.getString("mainmenu.contests"), "DefaultMusicTop100.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_animes"), icon_list_item(Locale.getString("mainmenu.anime_sources"), "DefaultTVShows.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_artists"), icon_list_item(Locale.getString("mainmenu.song_artists"), "DefaultArtist.png"), True)
+    xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_song_genres"), icon_list_item(Locale.getString("mainmenu.song_genres"), "DefaultMusicAlbums.png"), True)
     xbmcplugin.endOfDirectory(HANDLE)
 
 def list_amv(category: str, amvList: AmvResultList):
@@ -124,16 +125,6 @@ def list_final_directories(category: str, dirList: list, urlAction: str, icon: s
                 list_item.setLabel(row[0] + "  [LIGHT]("+str(row[1])+")[/LIGHT]")
                 list_item.setInfo("video", {"size": row[1]})
             xbmcplugin.addDirectoryItem(HANDLE, format_url(action=urlAction, dirname=row[0]), list_item, True)
-    xbmcplugin.endOfDirectory(HANDLE)
-
-def list_contests():
-    xbmcplugin.setPluginCategory(HANDLE, "Contests")
-    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL)
-    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_SIZE)
-
-    for contest in AmvTrackerDao.getContests():
-        list_item = icon_list_item(contest, "DefaultMusicTop100.png")
-        xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_contest_amv", contest=contest), list_item, True)
     xbmcplugin.endOfDirectory(HANDLE)
 
 def build_list_item_from_amv(amv: Amv):
@@ -165,13 +156,14 @@ def build_plot_info_string(amv: Amv) -> str:
     amvGenres = " / ".join(amv.getGenres())
     animeList = "[CR] - ".join(amv.getAnimes())
 
-    infoString = ("[B]Amv Genres : [/B]"+amvGenres+"[CR]" if amvGenres.strip() else "") \
-        + ("[B]Song Artist : [/B]"+amv.getSongArtist()+"[CR]" if amv.getSongArtist().strip() else "") \
-        + ("[B]Song Title : [/B]"+amv.getSongTitle()+"[CR]" if amv.getSongTitle().strip() else "") \
-        + ("[B]Song Genre : [/B]"+amv.getSongGenre()+"[CR]" if amv.getSongGenre().strip() else "") \
-        + ("[B]Date : [/B]"+amv.getReleaseDate()+"[CR]" if amv.getReleaseDate().strip() else "") \
-        + ("[B]Studio : [/B]"+amv.getStudio()+"[CR]" if amv.getStudio().strip() else "") \
-        + ("[B]Animes : [/B]"+animeList+"[CR]" if animeList.strip() else "") 
+    infoString = ("[B]"+Locale.getString("amvinfo.amv_genre")+" : [/B]"+amvGenres+"[CR]" if amvGenres.strip() else "") \
+        + ("[B]"+Locale.getString("amvinfo.song_artist")+" : [/B]"+amv.getSongArtist()+"[CR]" if amv.getSongArtist().strip() else "") \
+        + ("[B]"+Locale.getString("amvinfo.song_title")+" : [/B]"+amv.getSongTitle()+"[CR]" if amv.getSongTitle().strip() else "") \
+        + ("[B]"+Locale.getString("amvinfo.song_genre")+" : [/B]"+amv.getSongGenre()+"[CR]" if amv.getSongGenre().strip() else "") \
+        + ("[B]"+Locale.getString("amvinfo.date")+" : [/B]"+amv.getReleaseDate()+"[CR]" if amv.getReleaseDate().strip() else "") \
+        + ("[B]"+Locale.getString("amvinfo.studio")+" : [/B]"+amv.getStudio()+"[CR]" if amv.getStudio().strip() else "") \
+        + ("[B]"+Locale.getString("amvinfo.animes")+" : [/B]"+animeList+"[CR]" if animeList.strip() else "") 
+
     return infoString
     
 def get_thumbnail_path(vid_thumb_path):
@@ -188,10 +180,10 @@ def build_amv_context_menu(amv: Amv):
     contextMenuList = list()
 
     if amv.isFavorite():
-        contextMenuList.append(("Remove from AmvTracker Favorites", f"RunScript(plugin.video.amvtracker, removeFromFavorite, {amv.getId()})"))
+        contextMenuList.append((Locale.getString("contextmenu.remove_from_favorites"), f"RunScript(plugin.video.amvtracker, removeFromFavorite, {amv.getId()})"))
     else:
-        contextMenuList.append(("Add to AmvTracker Favorites", f"RunScript(plugin.video.amvtracker, addToFavorite, {amv.getId()})"))
-    contextMenuList.append(("Add To List", f"RunScript(plugin.video.amvtracker, addToCustomLists, {amv.getId()})"))
+        contextMenuList.append((Locale.getString("contextmenu.add_to_favorites"), f"RunScript(plugin.video.amvtracker, addToFavorite, {amv.getId()})"))
+    contextMenuList.append((Locale.getString("contextmenu.add_to_list"), f"RunScript(plugin.video.amvtracker, addToCustomLists, {amv.getId()})"))
     return contextMenuList
 
 if __name__ == '__main__':
