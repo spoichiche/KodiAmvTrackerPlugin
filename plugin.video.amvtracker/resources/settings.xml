@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<category label="$LOCALIZE[128]">
+		<setting label="32001" type="file" id="dbfilepath" default=""/>
+	</category>
+</settings>

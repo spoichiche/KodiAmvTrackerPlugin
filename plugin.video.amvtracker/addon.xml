@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.amvtracker" name="AmvTracker plugin" version="0.0.1" provider-name="spoichiche">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="main.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.python.library" library="script.py"/>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_GB">Local AmvTracker database plugin</summary>
+    <description lang="en_GB">Local AmvTracker database plugin.</description>
+    <platform>windows</platform>
+    <license>GPL-2.0-only</license>
+  </extension>
+</addon>
