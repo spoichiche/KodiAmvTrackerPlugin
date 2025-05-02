@@ -15,8 +15,7 @@ xbmc.log("AmvTracker scripts : url = " + str(sys.argv), xbmc.LOGINFO)
 addon = xbmcaddon.Addon()
 addonName = addon.getAddonInfo('name')
 
-def getUserSelectedList() -> str:
-    amvLists = AmvTrackerDao.getCustomLists()
+def getUserSelectedList(amvLists: list) -> str:
     selectList = list()
     for amvList in amvLists:
         selectList.append(amvList[0])
@@ -28,37 +27,38 @@ def getUserSelectedRating() -> str:
     select = xbmcgui.Dialog().select(Locale.getString("contextmenu.set_rating"), selectList)
     return "" if select == -1 else selectList[select]
 
+def processContextMenuActions():
+    amvId = sys.argv[2]
+    doRefresh = sys.argv[3] == "doRefresh"
+
+    if "addToFavorite" == action:
+        AmvTrackerDao.addAmvToFavorites(amvId)
+        xbmcgui.Dialog().ok(addonName, Locale.getString("dialog.added_favorite_success"))
+    elif "removeFromFavorite" == action:
+        AmvTrackerDao.removeAmvFromFavorites(amvId)
+        xbmcgui.Dialog().ok(addonName, Locale.getString("dialog.removed_favorite_success"))
+    elif "addToCustomLists" == action:
+        listname = getUserSelectedList(AmvTrackerDao.getCustomListsWithoutAmv(amvId))
+        if listname != "":
+            AmvTrackerDao.addToCustomList(amvId, listname)
+            xbmcgui.Dialog().ok(addonName, Locale.getFormatedString("dialog.added_to_custom_list_success", listname))
+    elif "removeFromCustomLists" == action:
+        listname = getUserSelectedList(AmvTrackerDao.getCustomListsWithAmv(amvId))
+        if listname != "":
+            AmvTrackerDao.removeFromCustomList(amvId, listname)
+            xbmcgui.Dialog().ok(addonName, Locale.getFormatedString("dialog.removed_from_custom_list_success", listname))
+    elif "setRating" == action:
+        rating = getUserSelectedRating()
+        if rating != "":
+            AmvTrackerDao.setRating(amvId, float(rating))
+            xbmcgui.Dialog().ok(addonName, Locale.getString("dialog.rating_set_success"))
+    
+    if doRefresh:
+        xbmc.executebuiltin("Container.Refresh")
+
 if __name__ == '__main__':
     action = sys.argv[1]
     xbmc.log("AmvTracker scripts : dbpath = " + str(addon.getSetting('dbfilepath')), xbmc.LOGINFO)
     
     AmvTrackerDao.init(addon.getSetting('dbfilepath'))
-
-    if "addToFavorite" == action:
-        amvId = sys.argv[2]
-        AmvTrackerDao.addAmvToFavorites(amvId)
-        xbmcgui.Dialog().ok(addonName, Locale.getString("dialog.added_favorite_success"))
-        xbmc.executebuiltin("Container.Refresh")
-    elif "removeFromFavorite" == action:
-        amvId = sys.argv[2]
-        AmvTrackerDao.removeAmvFromFavorites(amvId)
-        xbmcgui.Dialog().ok(addonName, Locale.getString("dialog.removed_favorite_success"))
-        xbmc.executebuiltin("Container.Refresh")
-    elif "addToCustomLists" == action:
-        amvId = sys.argv[2]
-        listname = getUserSelectedList()
-        if listname != "":
-            AmvTrackerDao.addToCustomList(amvId, listname)
-            xbmcgui.Dialog().ok(addonName, Locale.getFormatedString("dialog.added_to_custom_list_success", listname))
-    elif "removeFromCustomLists" == action:
-        amvId = sys.argv[2]
-        listname = getUserSelectedList()
-        if listname != "":
-            AmvTrackerDao.removeFromCustomList(amvId, listname)
-            xbmcgui.Dialog().ok(addonName, Locale.getFormatedString("dialog.removed_from_custom_list_success", listname))
-    elif "setRating" == action:
-        amvId = sys.argv[2]
-        rating = getUserSelectedRating()
-        if rating != "":
-            AmvTrackerDao.setRating(amvId, float(rating))
-            xbmcgui.Dialog().ok(addonName, Locale.getString("dialog.rating_set_success"))
+    processContextMenuActions()

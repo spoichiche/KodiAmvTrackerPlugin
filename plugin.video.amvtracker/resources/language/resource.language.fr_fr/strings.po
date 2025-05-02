@@ -129,11 +129,11 @@ msgid "Select a list"
 msgstr "Choix de la liste"
 
 msgctxt "#32028"
-msgid "Amv succesfully added to {}"
+msgid "Amv succesfully added to {List}"
 msgstr "Amv ajouté à {} avec succès"
 
 msgctxt "#32029"
-msgid "Amv succesfully removed from {}"
+msgid "Amv succesfully removed from {List}"
 msgstr "Amv retiré de {} avec succès"
 
 msgctxt "#32032"

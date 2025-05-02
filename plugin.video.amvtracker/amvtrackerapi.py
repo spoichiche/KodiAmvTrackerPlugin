@@ -31,12 +31,13 @@ class Amv(object):
         return self.rowData[AMV_PROPERTIES.get(property)]
 
     def getLabel(self) -> str:
+        #TODO move out of the api + handle translation
         editors = self.getEditors()
         if len(editors) == 1:
             return editors[0] + " - " + self.getTitle()
         elif len(editors) == 2:
-            return editors[0] + " & " + editors[1] + " - " + self.getTitle()
-        if len(editors) > 2:
+            return editors[0] + " / " + editors[1] + " - " + self.getTitle()
+        elif len(editors) > 2:
             return editors[0] + " & More - " + self.getTitle()
         else:
             return self.getTitle()
@@ -300,17 +301,29 @@ class AmvTrackerDao(object):
             res = cur.execute("SELECT " + AmvTrackerDao.getColumns() + " FROM sub_db_0 WHERE song_genre = ?", [genre])
             return AmvResultList(res.fetchall())
 
-    def getCustomLists():
+    def getAllCustomLists():
         with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
             cur = con.cursor()
             res = cur.execute(
             """
-            SELECT list_name,
-                CASE WHEN vid_ids = '' THEN 0
-                ELSE LENGTH(vid_ids) - LENGTH(REPLACE(vid_ids, ";", "")) + 1
-                END AS amvCount
+            SELECT list_name
+                ,CASE WHEN vid_ids = '' THEN 0
+                    ELSE LENGTH(vid_ids) - LENGTH(REPLACE(vid_ids, ";", "")) + 1
+                    END AS amvCount
             FROM custom_lists
             """)
+            return res.fetchall()
+
+    def getCustomListsWithAmv(amvId: str):
+        with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
+            cur = con.cursor()
+            res = cur.execute("SELECT list_name FROM custom_lists WHERE vid_ids LIKE ?", ["%"+amvId+"%"])
+            return res.fetchall()
+
+    def getCustomListsWithoutAmv(amvId: str):
+        with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
+            cur = con.cursor()
+            res = cur.execute("SELECT list_name FROM custom_lists WHERE NOT vid_ids LIKE ?", ["%"+amvId+"%"])
             return res.fetchall()
 
     def getCustomListAmvs(listName: str) -> AmvResultList:

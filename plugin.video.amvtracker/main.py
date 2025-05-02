@@ -11,8 +11,15 @@ import xbmc
 from amvtrackerapi import Amv, AmvResultList, AmvTrackerDao
 from locale import Locale
 
+#TODO comment the code
+#TODO log to DEBUG
+
+###plugin URL : plugin://plugin.video.amvtracker/
 URL = sys.argv[0]
+#plugin handle (plugin id)
 HANDLE = int(sys.argv[1])
+#global params being processed (will initialised later)
+params = None
 
 def get_params(param_string):
     param_string = sys.argv[2][1:]
@@ -36,6 +43,7 @@ def set_amv_sort_methods():
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_FULLPATH)
 
 def router(param_string):
+    global params
     params = get_params(param_string)
     xbmc.log("AmvTracker plugin : url " + str(URL), xbmc.LOGINFO)
 
@@ -48,7 +56,7 @@ def router(param_string):
     elif 'list_favorites' == params['action']:
         list_amv(Locale.getString("mainmenu.favorite_amvs"), AmvTrackerDao.getAllFavorites())
     elif 'list_lists' == params['action']:
-        list_final_directories(Locale.getString("mainmenu.custom_lists"), AmvTrackerDao.getCustomLists(), "list_list_amv", "")
+        list_final_directories(Locale.getString("mainmenu.custom_lists"), AmvTrackerDao.getAllCustomLists(), "list_list_amv", "")
     elif 'list_list_amv' == params['action']:
         list_amv(params['dirname'], AmvTrackerDao.getCustomListAmvs(params['dirname']))
     elif 'list_editors' == params['action']:
@@ -160,6 +168,8 @@ def build_plot_info_string(amv: Amv) -> str:
     amvGenres = " / ".join(amv.getGenres())
     animeList = "[CR] - ".join(amv.getAnimes())
 
+    #TODO add and check settings for each field display
+
     infoString = ("[B]"+Locale.getString("amvinfo.amv_genre")+" : [/B]"+amvGenres+"[CR]" if amvGenres.strip() else "") \
         + ("[B]"+Locale.getString("amvinfo.song_artist")+" : [/B]"+amv.getSongArtist()+"[CR]" if amv.getSongArtist().strip() else "") \
         + ("[B]"+Locale.getString("amvinfo.song_title")+" : [/B]"+amv.getSongTitle()+"[CR]" if amv.getSongTitle().strip() else "") \
@@ -184,14 +194,20 @@ def get_thumbnail_path(vid_thumb_path):
 def build_amv_context_menu(amv: Amv):
     contextMenuList = list()
 
+    ### Add / Remove from favorite actions
+    doRefresh = "doRefresh" if params['action'] == "list_favorites" else "noRefresh"
     if amv.isFavorite():
-        contextMenuList.append((Locale.getString("contextmenu.remove_from_favorites"), f"RunScript(plugin.video.amvtracker, removeFromFavorite, {amv.getId()})"))
+        contextMenuList.append((Locale.getString("contextmenu.remove_from_favorites"), f"RunScript(plugin.video.amvtracker, removeFromFavorite, {amv.getId()}, {doRefresh})"))
     else:
-        contextMenuList.append((Locale.getString("contextmenu.add_to_favorites"), f"RunScript(plugin.video.amvtracker, addToFavorite, {amv.getId()})"))
+        contextMenuList.append((Locale.getString("contextmenu.add_to_favorites"), f"RunScript(plugin.video.amvtracker, addToFavorite, {amv.getId()}, {doRefresh})"))
     
-    contextMenuList.append((Locale.getString("contextmenu.add_to_list"), f"RunScript(plugin.video.amvtracker, addToCustomLists, {amv.getId()})"))
+    ### Add / Remove from custom list action
+    contextMenuList.append((Locale.getString("contextmenu.add_to_list"), f"RunScript(plugin.video.amvtracker, addToCustomLists, {amv.getId()}, noRefresh)"))
+    doRefresh = "doRefresh" if "list_list_amv" == params['action'] else "noRefresh"
+    contextMenuList.append((Locale.getString("contextmenu.remove_from_list"), f"RunScript(plugin.video.amvtracker, removeFromCustomLists, {amv.getId()}, {doRefresh})"))
 
-    contextMenuList.append((Locale.getString("contextmenu.set_rating"), f"RunScript(plugin.video.amvtracker, setRating, {amv.getId()})"))
+    ### Set rating action
+    contextMenuList.append((Locale.getString("contextmenu.set_rating"), f"RunScript(plugin.video.amvtracker, setRating, {amv.getId()}, doRefresh)"))
 
     return contextMenuList
 
