@@ -16,6 +16,11 @@ addon = xbmcaddon.Addon()
 addonName = addon.getAddonInfo('name')
 
 def getUserSelectedList(amvLists: list) -> str:
+    """
+    Open dialog for custom list selection
+    @param amvLists: the list to choose from
+    @return: the selected list name or empty string if no selection
+    """
     selectList = list()
     for amvList in amvLists:
         selectList.append(amvList[0])
@@ -23,6 +28,10 @@ def getUserSelectedList(amvLists: list) -> str:
     return "" if select == -1 else selectList[select]
 
 def getUserSelectedRating() -> str:
+    """
+    Open dialog for rating selection
+    @return: the selected rating or empty string if no selection
+    """
     selectList = ("10", "9.5", "9", "8.5", "8", "7.5", "7", "6.5", "6", "5.5", "5", "4.5", "4", "3.5", "3", "2.5", "2", "1.5", "1", "0.5", "0")
     select = xbmcgui.Dialog().select(Locale.getString("contextmenu.set_rating"), selectList)
     return "" if select == -1 else selectList[select]

@@ -2,12 +2,26 @@ import re
 import xbmc
 import xbmcaddon
 
+"""
+Utilty class for dealing with translation strings using readable key instead of integer ids
+"""
 class Locale():
     def getString(strid: str) -> str:
+        """
+        Get the translated string corresponding to the key
+        @param strid: the key
+        @return: the translation
+        """
         res = xbmcaddon.Addon().getLocalizedString(Locale.STRINGS[strid])
         return res
 
     def getFormatedString(strid: str, param: str) -> str:
+        """
+        Get the translated string corresponding to the key, substitute the parameter in the translation string
+        @param strid: the key
+        @param param: the string to inject in the translation
+        @return: the translation
+        """
         localeString = re.sub("{.*}", "{}", xbmcaddon.Addon().getLocalizedString(Locale.STRINGS[strid])) 
         return localeString.format(param)
 

@@ -11,9 +11,6 @@ import xbmc
 from amvtrackerapi import Amv, AmvResultList, AmvTrackerDao
 from locale import Locale
 
-#TODO comment the code
-#TODO log to DEBUG
-
 #plugin URL : plugin://plugin.video.amvtracker/
 URL = sys.argv[0]
 #plugin handle (plugin id)
@@ -199,7 +196,6 @@ def build_list_item_from_amv(amv: Amv) -> xbmcgui.ListItem:
     list_item.setArt({'thumb': get_thumbnail_path(amv.getThumbnailPath())})
     list_item.setIsFolder(False)
     list_item.setProperty('IsPlayable', 'true')
-    #list_item.setPath(get_amv_filepath(amv.getFilepath())) #TODO set playcount in a play action and xbmcplugin.setResolvedUrl
     list_item.setPath(format_url(action='play_amv', amvid=amv.getId()))
 
     list_item.addContextMenuItems(build_amv_context_menu(amv))
