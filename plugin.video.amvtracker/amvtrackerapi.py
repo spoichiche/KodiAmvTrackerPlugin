@@ -81,6 +81,12 @@ class AmvTrackerDao(object):
     def getColumns():
         return ", ".join(AMV_PROPERTIES.keys())
 
+    def getAmv(amvid: str) -> Amv:
+        with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
+            cur = con.cursor()
+            res = cur.execute("SELECT " + AmvTrackerDao.getColumns() + " FROM sub_db_0 WHERE video_id = ?", [amvid])
+            return Amv(res.fetchone())
+
     def getAllAmvs() -> AmvResultList:
         with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
             cur = con.cursor()
@@ -357,3 +363,8 @@ class AmvTrackerDao(object):
         with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
             cur = con.cursor()
             cur.execute("UPDATE sub_db_0 SET my_rating = ? WHERE video_id = ?", [rating, amvId])
+
+    def incrementPlaycount(amvId: str):
+        with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
+            cur = con.cursor()
+            cur.execute("UPDATE sub_db_0 SET play_count = play_count + 1 WHERE video_id = ?", [amvId])

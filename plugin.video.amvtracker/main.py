@@ -56,6 +56,8 @@ def router():
 
     if not params:
         list_root_dir()
+    elif 'play_amv' == params['action']:
+        play_amv(params['amvid'])
     elif 'list_amvs' == params['action']:
         list_amv(Locale.getString("mainmenu.all_amvs"), AmvTrackerDao.getAllAmvs())
     elif 'list_favorites' == params['action']:
@@ -187,6 +189,7 @@ def build_list_item_from_amv(amv: Amv) -> xbmcgui.ListItem:
     tags.setGenres(amv.getGenres())
     tags.setPlaycount(amv.getPlaycount())
     tags.setPlot(build_plot_info_string(amv))
+    tags.setFilenameAndPath(get_amv_filepath(amv.getFilepath()))
     
     if amv.getUserRating() is not None and amv.getUserRating() != '':
         tags.setRating(amv.getUserRating(), 1, "AmvTrackerRating", True)
@@ -194,8 +197,10 @@ def build_list_item_from_amv(amv: Amv) -> xbmcgui.ListItem:
     tags.addAvailableArtwork(get_thumbnail_path(amv.getThumbnailPath()), 'thumb')
 
     list_item.setArt({'thumb': get_thumbnail_path(amv.getThumbnailPath())})
+    list_item.setIsFolder(False)
     list_item.setProperty('IsPlayable', 'true')
-    list_item.setPath(amv.getFilepath()) #TODO set playcount in a play action and xbmcplugin.setResolvedUrl
+    #list_item.setPath(get_amv_filepath(amv.getFilepath())) #TODO set playcount in a play action and xbmcplugin.setResolvedUrl
+    list_item.setPath(format_url(action='play_amv', amvid=amv.getId()))
 
     list_item.addContextMenuItems(build_amv_context_menu(amv))
 
@@ -221,6 +226,8 @@ def build_plot_info_string(amv: Amv) -> str:
     """
     infoString = ""
 
+    if xbmcplugin.getSetting(HANDLE, "setPlaycountInPlot") == "true":
+        infoString += ("[B]"+Locale.getString("amvinfo.playcount")+" : [/B]"+str(amv.getPlaycount())+"[CR]" if str(amv.getPlaycount()).strip() else "")
     if xbmcplugin.getSetting(HANDLE, "setGenreInPlot") == "true":
         amvGenres = " / ".join(amv.getGenres())
         infoString += ("[B]"+Locale.getString("amvinfo.amv_genre")+" : [/B]"+amvGenres+"[CR]" if amvGenres.strip() else "")
@@ -244,11 +251,22 @@ def build_plot_info_string(amv: Amv) -> str:
         infoString += ("[B]"+Locale.getString("amvinfo.contests")+" : [/B]"+contestsList+"[CR]" if contestsList.strip() else "")
 
     return infoString
+
+def get_amv_filepath(amvFilepath:str) -> str:
+    """
+    Process amv file path from database and return the correct filepath for Kodi playback
+    @param amvFilepath: the amv file path present in the database
+    @return: the complete file path
+    """
+    if xbmcplugin.getSetting(HANDLE, "doFilepathSubstitution") == "true":
+        amvFilepath.replace(xbmcplugin.getSetting(HANDLE, "filepathSubstitutionReplace"), xbmcplugin.getSetting(HANDLE, "filepathSubstitutionWith"))
+    return amvFilepath
+
     
-def get_thumbnail_path(vid_thumb_path):
+def get_thumbnail_path(vid_thumb_path:str) -> str:
     """
     Process vid_thumb_path from database and return the correct filepath
-    
+    @param vid_thumb_path: the thumbpath present in the database
     @return: the complete file path
     """
     if vid_thumb_path.startswith("\\") or vid_thumb_path.startswith("/"):
@@ -275,6 +293,20 @@ def build_amv_context_menu(amv: Amv):
     contextMenuList.append((Locale.getString("contextmenu.set_rating"), f"RunScript(plugin.video.amvtracker, setRating, {amv.getId()}, doRefresh)"))
 
     return contextMenuList
+
+def play_amv(amvid: str):
+    """
+    Play action : set playcount++ then setResolvedUrl the item to play for Kodi
+    @param amvid:
+    """
+    xbmc.log("AmvTracker plugin : play amv " + amvid, xbmc.LOGDEBUG)
+    
+    amv = AmvTrackerDao.getAmv(amvid)
+    list_item = build_list_item_from_amv(amv)
+    list_item.setPath(get_amv_filepath(amv.getFilepath()))
+    xbmcplugin.setResolvedUrl(HANDLE, True, list_item)
+
+    AmvTrackerDao.incrementPlaycount(amv.getId())
 
 if __name__ == '__main__':
     if not xbmcplugin.getSetting(HANDLE, "dbfilepath"):

@@ -195,3 +195,23 @@ msgstr ""
 msgctxt "#32046"
 msgid "Information showed in plot field"
 msgstr ""
+
+msgctxt "#32047"
+msgid "Filepath substitution"
+msgstr ""
+
+msgctxt "#32048"
+msgid "Replace"
+msgstr ""
+
+msgctxt "#32049"
+msgid "With"
+msgstr ""
+
+msgctxt "#32050"
+msgid "Show playcount in plot"
+msgstr ""
+
+msgctxt "#32051"
+msgid "Playcount"
+msgstr ""

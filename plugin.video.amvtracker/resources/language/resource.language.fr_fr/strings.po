@@ -195,3 +195,23 @@ msgstr "Participations"
 msgctxt "#32046"
 msgid "Information showed in plot field"
 msgstr "Informations dans la description"
+
+msgctxt "#32047"
+msgid "Filepath substitution"
+msgstr "Substitution de chemin"
+
+msgctxt "#32048"
+msgid "Replace"
+msgstr "Remplacer"
+
+msgctxt "#32049"
+msgid "With"
+msgstr "Par"
+
+msgctxt "#32050"
+msgid "Show playcount in plot"
+msgstr "Afficher les visionages dans la description"
+
+msgctxt "#32051"
+msgid "Playcount"
+msgstr "Nb Visionage"

@@ -48,4 +48,5 @@ class Locale():
         ,"dialog.rating_set_success"                : 32033
         ,"amvinfo.andMore"                          : 32034
         ,"amvinfo.contests"                         : 32045
+        ,"amvinfo.playcount"                        : 32051
     }
