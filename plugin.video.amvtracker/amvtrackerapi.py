@@ -27,21 +27,6 @@ class Amv(object):
     def __init__(self, rowData):
         self.rowData = rowData
 
-    def get(self, property):
-        return self.rowData[AMV_PROPERTIES.get(property)]
-
-    def getLabel(self) -> str:
-        #TODO move out of the api + handle translation
-        editors = self.getEditors()
-        if len(editors) == 1:
-            return editors[0] + " - " + self.getTitle()
-        elif len(editors) == 2:
-            return editors[0] + " / " + editors[1] + " - " + self.getTitle()
-        elif len(editors) > 2:
-            return editors[0] + " & More - " + self.getTitle()
-        else:
-            return self.getTitle()
-
     def getId(self) -> str:
         return self.rowData[0]
     def getTitle(self) -> str:
@@ -62,6 +47,8 @@ class Amv(object):
         return self.rowData[9]
     def getAnimes(self) -> list:
         return self.rowData[6].split("; ")
+    def getContests(self) -> list:
+        return self.rowData[11].split("\n")
     def getPlaycount(self) -> str:
         return self.rowData[16]
     def getThumbnailPath(self) -> str:
@@ -70,6 +57,8 @@ class Amv(object):
         return self.rowData[18] == 1
     def getUserRating(self) -> float:
         return self.rowData[19]
+    def getFilepath(self) -> str:
+        return self.rowData[17]
     
 
 class AmvResultList(object):

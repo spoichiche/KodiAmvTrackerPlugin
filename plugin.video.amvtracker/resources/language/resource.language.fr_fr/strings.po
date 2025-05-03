@@ -143,3 +143,55 @@ msgstr "Favoris"
 msgctxt "#32033"
 msgid "New rating set succesfully"
 msgstr "Nouvelle note attribuée avec succès"
+
+msgctxt "#32034"
+msgid "& More"
+msgstr "et plus"
+
+msgctxt "#32035"
+msgid "Force 'Editor - Title' as the Amv Title"
+msgstr "Forcer 'Createur - Titre' dans le titre de l'Amv"
+
+msgctxt "#32036"
+msgid "Show Amv genre info in plot"
+msgstr "Afficher le genre de l'Amv dans la description"
+
+msgctxt "#32037"
+msgid "Show song artist info in plot"
+msgstr "Afficher l'artiste dans la description"
+
+msgctxt "#32038"
+msgid "Show song title info in plot"
+msgstr "Afficher la chanson dans la description"
+
+msgctxt "#32039"
+msgid "Show song genre info in plot"
+msgstr "Afficher le genre musical dans la description"
+
+msgctxt "#32040"
+msgid "Show release date info in plot"
+msgstr "Afficher la date de sortie dans la description"
+
+msgctxt "#32041"
+msgid "Show studio info in plot"
+msgstr "Afficher le studio dans la description"
+
+msgctxt "#32042"
+msgid "Show rating info in plot"
+msgstr "Afficher la note dans la description"
+
+msgctxt "#32043"
+msgid "Show anime sources info in plot"
+msgstr "Afficher les animes dans la description"
+
+msgctxt "#32044"
+msgid "Show contests info in plot"
+msgstr "Afficher les concours dans la description"
+
+msgctxt "#32045"
+msgid "Contests"
+msgstr "Participations"
+
+msgctxt "#32046"
+msgid "Information showed in plot field"
+msgstr "Informations dans la description"

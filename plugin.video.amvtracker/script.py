@@ -11,7 +11,7 @@ import xbmc
 from amvtrackerapi import Amv, AmvResultList, AmvTrackerDao
 from locale import Locale
 
-xbmc.log("AmvTracker scripts : url = " + str(sys.argv), xbmc.LOGINFO)
+xbmc.log("AmvTracker scripts : url = " + str(sys.argv), xbmc.LOGDEBUG)
 addon = xbmcaddon.Addon()
 addonName = addon.getAddonInfo('name')
 
@@ -58,7 +58,6 @@ def processContextMenuActions():
 
 if __name__ == '__main__':
     action = sys.argv[1]
-    xbmc.log("AmvTracker scripts : dbpath = " + str(addon.getSetting('dbfilepath')), xbmc.LOGINFO)
     
     AmvTrackerDao.init(addon.getSetting('dbfilepath'))
     processContextMenuActions()

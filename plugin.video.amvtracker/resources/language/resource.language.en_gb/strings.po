@@ -143,3 +143,55 @@ msgstr ""
 msgctxt "#32033"
 msgid "New rating set succesfully"
 msgstr ""
+
+msgctxt "#32034"
+msgid "& More"
+msgstr ""
+
+msgctxt "#32035"
+msgid "Force 'Editor - Title' as the Amv Title"
+msgstr ""
+
+msgctxt "#32036"
+msgid "Show Amv genre info in plot"
+msgstr ""
+
+msgctxt "#32037"
+msgid "Show song artist info in plot"
+msgstr ""
+
+msgctxt "#32038"
+msgid "Show song title info in plot"
+msgstr ""
+
+msgctxt "#32039"
+msgid "Show song genre info in plot"
+msgstr ""
+
+msgctxt "#32040"
+msgid "Show release date info in plot"
+msgstr ""
+
+msgctxt "#32041"
+msgid "Show studio info in plot"
+msgstr ""
+
+msgctxt "#32042"
+msgid "Show rating info in plot"
+msgstr ""
+
+msgctxt "#32043"
+msgid "Show anime sources info in plot"
+msgstr ""
+
+msgctxt "#32044"
+msgid "Show contests info in plot"
+msgstr ""
+
+msgctxt "#32045"
+msgid "Contests"
+msgstr ""
+
+msgctxt "#32046"
+msgid "Information showed in plot field"
+msgstr ""

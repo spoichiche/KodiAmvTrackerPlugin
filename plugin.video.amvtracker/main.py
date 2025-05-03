@@ -14,14 +14,14 @@ from locale import Locale
 #TODO comment the code
 #TODO log to DEBUG
 
-###plugin URL : plugin://plugin.video.amvtracker/
+#plugin URL : plugin://plugin.video.amvtracker/
 URL = sys.argv[0]
 #plugin handle (plugin id)
 HANDLE = int(sys.argv[1])
 #global params being processed (will initialised later)
 params = None
 
-def get_params(param_string):
+def get_params():
     param_string = sys.argv[2][1:]
     if param_string:
         return dict(parse_qsl(param_string))
@@ -31,22 +31,27 @@ def format_url(**kwargs):
     return '{}?{}'.format(URL, urlencode(kwargs))
 
 def set_amv_sort_methods():
+    """
+    Set all the sorting options for amv type content listings
+    """
     xbmcplugin.setContent(HANDLE, 'musicvideos')
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_TITLE)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_VIDEO_YEAR)
-    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_DATEADDED)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_GENRE)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_STUDIO)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_VIDEO_RATING)
-    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LASTPLAYED)
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_PLAYCOUNT)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_FULLPATH)
 
-def router(param_string):
+def router():
+    """
+    Main entry point
+    """
     global params
-    params = get_params(param_string)
-    xbmc.log("AmvTracker plugin : url " + str(URL), xbmc.LOGINFO)
-
+    params = get_params()
+    xbmc.log("AmvTracker plugin : url " + str(URL), xbmc.LOGDEBUG)
+    
     AmvTrackerDao.init(xbmcplugin.getSetting(HANDLE, "dbfilepath"))
 
     if not params:
@@ -92,13 +97,24 @@ def router(param_string):
     elif 'list_song_genre_amv' == params['action']:
         list_amv(params['dirname'], AmvTrackerDao.getSongGenreAmvs(params['dirname']))
 
-def icon_list_item(label, icon="", label2 = ""):
+def icon_list_item(label: str, icon="", label2 = "") -> xbmcgui.ListItem:
+    """
+    Shortcut to create a xbmcgui.ListItem object with label and icon
+
+    @param: label
+    @param: icon
+    @param: label2
+    @returns: the list item
+    """
     liz = xbmcgui.ListItem(label=label)
     liz.setArt({'icon': icon})
     liz.setLabel2(label2)
     return liz
 
 def list_root_dir():
+    """
+    Main menu listings
+    """
     xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_amvs"), icon_list_item(Locale.getString("mainmenu.all_amvs"), "DefaultMusicVideoTitle.png"), True)
     xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_favorites"), icon_list_item(Locale.getString("mainmenu.favorite_amvs"), "DefaultFavourites.png"), True)
     xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_lists"), icon_list_item(Locale.getString("mainmenu.custom_lists"), ""), True)
@@ -113,6 +129,12 @@ def list_root_dir():
     xbmcplugin.endOfDirectory(HANDLE)
 
 def list_amv(category: str, amvList: AmvResultList):
+    """
+    Generic listing of a list of amv
+
+    @param category: the name of the page listing
+    @param amvList
+    """
     xbmcplugin.setPluginCategory(HANDLE, category)
     set_amv_sort_methods()
 
@@ -122,6 +144,14 @@ def list_amv(category: str, amvList: AmvResultList):
     xbmcplugin.endOfDirectory(HANDLE)
 
 def list_final_directories(category: str, dirList: list, urlAction: str, icon: str):
+    """
+    Generic listing for a list of amv directories
+
+    @param category: the name of the page listing
+    @param dirList: a list of tuples like ({directoryName}, {nb of amv in the directory})
+    @param urlAction: the action to trigger on entering a directory
+    @param icon: the icon to display for the directories
+    """
     xbmcplugin.setPluginCategory(HANDLE, category)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_SIZE)
@@ -135,20 +165,27 @@ def list_final_directories(category: str, dirList: list, urlAction: str, icon: s
             xbmcplugin.addDirectoryItem(HANDLE, format_url(action=urlAction, dirname=row[0]), list_item, True)
     xbmcplugin.endOfDirectory(HANDLE)
 
-def build_list_item_from_amv(amv: Amv):
-    list_item = xbmcgui.ListItem(label=amv.getLabel(), offscreen=False)
+def build_list_item_from_amv(amv: Amv) -> xbmcgui.ListItem:
+    """
+    Builds a xbmcgui.ListItem object from an Amv
+
+    @param amv
+    @return: xbmcgui.ListItem representing an amv
+    """
+    amvLabel = build_amv_label(amv)
+    list_item = xbmcgui.ListItem(label=amvLabel, offscreen=False)
     
     tags = list_item.getVideoInfoTag()
     tags.setUniqueIDs({'amvt2id': amv.getId()}, defaultuniqueid='amvt2id')
     tags.setMediaType('musicvideo')
     
-    tags.setTitle(amv.getLabel()) #TODO add contitional title form
+    tags.setTitle(amvLabel if xbmcplugin.getSetting(HANDLE, "setAmvLabelAsTitle") == "true" else amv.getTitle())
     tags.setDirectors(amv.getEditors())
     tags.setStudios([amv.getStudio()])
     tags.setPremiered(amv.getReleaseDate())
     tags.setArtists([amv.getSongArtist()])
     tags.setGenres(amv.getGenres())
-    tags.setPlaycount(amv.get('play_count'))
+    tags.setPlaycount(amv.getPlaycount())
     tags.setPlot(build_plot_info_string(amv))
     
     if amv.getUserRating() is not None and amv.getUserRating() != '':
@@ -158,36 +195,64 @@ def build_list_item_from_amv(amv: Amv):
 
     list_item.setArt({'thumb': get_thumbnail_path(amv.getThumbnailPath())})
     list_item.setProperty('IsPlayable', 'true')
-    list_item.setPath(amv.get('local_file')) #TODO set playcount in a play action and xbmcplugin.setResolvedUrl
+    list_item.setPath(amv.getFilepath()) #TODO set playcount in a play action and xbmcplugin.setResolvedUrl
 
     list_item.addContextMenuItems(build_amv_context_menu(amv))
 
     return list_item
 
+def build_amv_label(amv: Amv) -> str:
+        editors = amv.getEditors()
+        if len(editors) == 1:
+            return editors[0] + " - " + amv.getTitle()
+        elif len(editors) == 2:
+            return editors[0] + " / " + editors[1] + " - " + amv.getTitle()
+        elif len(editors) > 2:
+            return editors[0] + " " + Locale.getString("amvinfo.andMore") + " - " + amv.getTitle()
+        else:
+            return amv.getTitle()
+
 def build_plot_info_string(amv: Amv) -> str:
-    amvGenres = " / ".join(amv.getGenres())
-    animeList = "[CR] - ".join(amv.getAnimes())
+    """
+    Build and format a string containing all the data that should be contained in the amv plot field
 
-    #TODO add and check settings for each field display
+    @param amv: the amv
+    @return: the plot as a string
+    """
+    infoString = ""
 
-    infoString = ("[B]"+Locale.getString("amvinfo.amv_genre")+" : [/B]"+amvGenres+"[CR]" if amvGenres.strip() else "") \
-        + ("[B]"+Locale.getString("amvinfo.song_artist")+" : [/B]"+amv.getSongArtist()+"[CR]" if amv.getSongArtist().strip() else "") \
-        + ("[B]"+Locale.getString("amvinfo.song_title")+" : [/B]"+amv.getSongTitle()+"[CR]" if amv.getSongTitle().strip() else "") \
-        + ("[B]"+Locale.getString("amvinfo.song_genre")+" : [/B]"+amv.getSongGenre()+"[CR]" if amv.getSongGenre().strip() else "") \
-        + ("[B]"+Locale.getString("amvinfo.date")+" : [/B]"+amv.getReleaseDate()+"[CR]" if amv.getReleaseDate().strip() else "") \
-        + ("[B]"+Locale.getString("amvinfo.studio")+" : [/B]"+amv.getStudio()+"[CR]" if amv.getStudio().strip() else "") \
-        + ("[B]"+Locale.getString("amvinfo.user_rating")+" : [/B]"+str(amv.getUserRating())+" / 10[CR]" if str(amv.getUserRating()).strip() else "") \
-        + ("[B]"+Locale.getString("amvinfo.animes")+" : [/B]"+animeList+"[CR]" if animeList.strip() else "") 
+    if xbmcplugin.getSetting(HANDLE, "setGenreInPlot") == "true":
+        amvGenres = " / ".join(amv.getGenres())
+        infoString += ("[B]"+Locale.getString("amvinfo.amv_genre")+" : [/B]"+amvGenres+"[CR]" if amvGenres.strip() else "")
+    if xbmcplugin.getSetting(HANDLE, "setArtistInPlot") == "true":
+        infoString += ("[B]"+Locale.getString("amvinfo.song_artist")+" : [/B]"+amv.getSongArtist()+"[CR]" if amv.getSongArtist().strip() else "")
+    if xbmcplugin.getSetting(HANDLE, "setSongTitleInPlot") == "true":
+        infoString += ("[B]"+Locale.getString("amvinfo.song_title")+" : [/B]"+amv.getSongTitle()+"[CR]" if amv.getSongTitle().strip() else "")
+    if xbmcplugin.getSetting(HANDLE, "setSongGenreInPlot") == "true":
+        infoString += ("[B]"+Locale.getString("amvinfo.song_genre")+" : [/B]"+amv.getSongGenre()+"[CR]" if amv.getSongGenre().strip() else "")
+    if xbmcplugin.getSetting(HANDLE, "setDateInPlot") == "true":
+        infoString += ("[B]"+Locale.getString("amvinfo.date")+" : [/B]"+amv.getReleaseDate()+"[CR]" if amv.getReleaseDate().strip() else "")
+    if xbmcplugin.getSetting(HANDLE, "setStudioInPlot") == "true":
+        infoString += ("[B]"+Locale.getString("amvinfo.studio")+" : [/B]"+amv.getStudio()+"[CR]" if amv.getStudio().strip() else "")
+    if xbmcplugin.getSetting(HANDLE, "setRatingInPlot") == "true":
+        infoString += ("[B]"+Locale.getString("amvinfo.user_rating")+" : [/B]"+str(amv.getUserRating())+" / 10[CR]" if str(amv.getUserRating()).strip() else "")
+    if xbmcplugin.getSetting(HANDLE, "setAnimesInPlot") == "true":
+        animeList = "[CR] - ".join(amv.getAnimes())
+        infoString += ("[B]"+Locale.getString("amvinfo.animes")+" : [/B]"+animeList+"[CR]" if animeList.strip() else "")
+    if xbmcplugin.getSetting(HANDLE, "setContestsInPlot") == "true":
+        contestsList = "[CR] - ".join(amv.getContests())
+        infoString += ("[B]"+Locale.getString("amvinfo.contests")+" : [/B]"+contestsList+"[CR]" if contestsList.strip() else "")
 
     return infoString
     
 def get_thumbnail_path(vid_thumb_path):
     """
-    process vid_thumb_path from database and return the correct filepath
-    return str: the complete file path
+    Process vid_thumb_path from database and return the correct filepath
+    
+    @return: the complete file path
     """
     if vid_thumb_path.startswith("\\") or vid_thumb_path.startswith("/"):
-        return os.path.join( os.path.dirname(xbmcplugin.getSetting(HANDLE, "dbfilepath")), ".."+vid_thumb_path).replace("/", "\\")
+        return os.path.join( os.path.dirname(xbmcplugin.getSetting(HANDLE, "dbfilepath")), ".."+vid_thumb_path)
     else:
         return vid_thumb_path
 
@@ -214,4 +279,4 @@ def build_amv_context_menu(amv: Amv):
 if __name__ == '__main__':
     if not xbmcplugin.getSetting(HANDLE, "dbfilepath"):
         xbmcaddon.Addon().openSettings()
-    router(sys.argv[2][1:])
+    router()

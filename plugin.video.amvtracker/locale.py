@@ -46,4 +46,6 @@ class Locale():
         ,"menu.editors_amv"                         : 32031
         ,"mainmenu.favorite_amvs"                   : 32032
         ,"dialog.rating_set_success"                : 32033
+        ,"amvinfo.andMore"                          : 32034
+        ,"amvinfo.contests"                         : 32045
     }
