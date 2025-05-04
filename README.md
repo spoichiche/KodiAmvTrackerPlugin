@@ -10,7 +10,7 @@
 
 ## Features
 
-- 🎞 Browse your entire AMV collection directly in Kodi
+- 🎞 Browse your entire local AMV collection directly in Kodi
 - 🔎 Search AMVs by title, editors, studios, genres, years, contests, anime sources, song artists and song genres
 - 📶 Order by title, year, genre, studio, rating, playcount, filepath
 - 📂 Support for AmvTracker's playcount, custom playlists, favorites and tags
@@ -25,8 +25,8 @@
 Before installing this plugin, ensure the following:
 
 - You have a working installation of [Kodi](https://kodi.tv/) (version 21 "Omega" or newer recommended)
-- You have [AmvTracker](https://github.com/bsobotka/amv_tracker) running locally or on your home network
-- Your AMV library is indexed and accessible through the AmvTracker API
+- You have [AmvTracker](https://github.com/bsobotka/amv_tracker) installed locally on your machine
+- Your AMV library is accessible through Kodi and indexed in AmvTracker
 
 ---
 
