@@ -11,9 +11,8 @@
 ## Features
 
 - 🎞 Browse your entire AMV collection directly in Kodi
-- 🗃️ Group AMVs by Editors, Studios, Genres, Years, Contests, Anime sources, Song artists and Song genres
-- 📶 Order by title / year / genre / studio / rating / playcount / filepath
-- 🔎 Search by title, artist, anime, genre, or tags
+- 🔎 Search AMVs by title, editors, studios, genres, years, contests, anime sources, song artists and song genres
+- 📶 Order by title, year, genre, studio, rating, playcount, filepath
 - 📂 Support for AmvTracker's playcount, custom playlists, favorites and tags
 - ⚙ Configurable connection to your local AmvTracker database
 - 🎮 Remote-control ready for the full Kodi experience
@@ -52,6 +51,10 @@ You can access the settings via:
   Add-ons > My add-ons > Video add-ons > AmvTracker > Configure
 Settings include:
 - **Database File**: The location to your local AmvTracker database
+- **Force 'Editor - Title' as the Amv Title**: The amv label shown in Kodi is defined by the current Skin and Viewtype. On the default skin, music videos are labelled as "Song Artist - Title". Use this setting to have the editors name in the label instead of the song artist
+- **Show tag Folder**: enable/disable showing of AmvTracker's custom labels in the main menu listings
+- **Filepath substitution**: Use this setting if you amvs are in a different location than the one listed in AmvTracker 'local file' field. Exemple: if the AmvTracker's database, all local files are in D:/Amv/xxx, but on your Kodi machine, the files are in E:/Amv Collection/xxx
+- **Information showed in plot field**: Controls how the description text of your Amvs are created. Metadata for video files are displayed differently based on your current skin and viewtype. Use these settings to hide/show Metadata that may want to see added in the description/plot of the Amv.
 
 ---
 
