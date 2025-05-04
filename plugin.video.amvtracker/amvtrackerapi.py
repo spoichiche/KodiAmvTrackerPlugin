@@ -21,6 +21,9 @@ AMV_PROPERTIES = {
     ,"local_file":17
     ,"favorite":18
     ,"my_rating":19
+    ,"tags_4":20
+    ,"tags_5":21
+    ,"tags_6":22
 }
 
 class Amv(object):
@@ -59,6 +62,16 @@ class Amv(object):
         return self.rowData[19]
     def getFilepath(self) -> str:
         return self.rowData[17]
+    def getTag2(self) -> str:
+        return self.rowData[13]
+    def getTag3(self) -> str:
+        return self.rowData[14]
+    def getTag4(self) -> str:
+        return self.rowData[20]
+    def getTag5(self) -> str:
+        return self.rowData[21]
+    def getTag6(self) -> str:
+        return self.rowData[22]
     
 
 class AmvResultList(object):
@@ -329,6 +342,51 @@ class AmvTrackerDao(object):
             amvIds = row[0].split("; ")
             res2 = cur.execute("SELECT " + AmvTrackerDao.getColumns() + " FROM sub_db_0 WHERE video_id IN ('" + "','".join(amvIds) + "')")
             return AmvResultList(res2.fetchall())
+
+    def getTagName(tagId: int) -> str:
+        with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
+            cur = con.cursor()
+            res = cur.execute("SELECT user_field_name FROM tags_lookup WHERE internal_field_name = ? AND in_use = 1", ["tags_"+str(tagId)])
+            row = res.fetchone()
+            if row is not None and len(row) > 0:
+                return row[0]
+            else:
+                return ""
+    
+    def getTagList(tagId: int) -> list:
+        strTagNum = str(tagId)
+        resultList = list()
+        with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
+            cur = con.cursor()
+            res = cur.execute("SELECT tag_name FROM tags_"+strTagNum)
+            rowlist = res.fetchall()
+            for row in rowlist:
+                tagName = row[0].lower()
+                res2 = cur.execute("SELECT COUNT(DISTINCT video_id) FROM sub_db_0 \
+                    WHERE local_file <> '' \
+                    AND ( tags_"+strTagNum+" = ? \
+                        OR tags_"+strTagNum+" LIKE ('%; ' || ?) \
+                        OR tags_"+strTagNum+" LIKE (? || '; %') \
+                        OR tags_"+strTagNum+" LIKE ('%; ' || ? || '; %')) "
+                    , [tagName, tagName, tagName, tagName])
+                amvCount = res2.fetchone()[0]
+                resultList.append((row[0], amvCount))
+            return resultList
+    
+    def getTagAmvs(tagId: int, tagName: str) -> AmvResultList:
+        strTagNum = str(tagId)
+        tagName = tagName.lower()
+        with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
+            cur = con.cursor()
+            res = cur.execute(
+                "SELECT "+ AmvTrackerDao.getColumns() +" FROM sub_db_0 \
+                WHERE local_file <> '' \
+                    AND ( tags_"+strTagNum+" = ? \
+                        OR tags_"+strTagNum+" LIKE ('%; ' || ?) \
+                        OR tags_"+strTagNum+" LIKE (? || '; %') \
+                        OR tags_"+strTagNum+" LIKE ('%; ' || ? || '; %')) "
+                ,[tagName, tagName, tagName, tagName])
+            return AmvResultList(res.fetchall())
 
     def addToCustomList(amvId: str, listName: str):
         with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:

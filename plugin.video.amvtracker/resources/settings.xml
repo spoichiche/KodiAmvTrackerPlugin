@@ -3,11 +3,15 @@
 	<category label="$LOCALIZE[128]">
 		<setting label="32001" type="file" id="dbfilepath" default=""/>
 		<setting label="32035" type="bool" id="setAmvLabelAsTitle" default="true"/>
+		<setting label="32052" type="bool" id="showTag2Filter" default="false"/>
+		<setting label="32053" type="bool" id="showTag3Filter" default="false"/>
+		<setting label="32054" type="bool" id="showTag4Filter" default="false"/>
+		<setting label="32055" type="bool" id="showTag5Filter" default="false"/>
+		<setting label="32056" type="bool" id="showTag6Filter" default="false"/>
 		<setting type="sep"/>
 		<setting label="32047" type="bool" id="doFilepathSubstitution" default="false"/>
 		<setting label="32048" type="text" id="filepathSubstitutionReplace" subsetting="true" enable="eq(-1,true)"/>
 		<setting label="32049" type="text" id="filepathSubstitutionWith" subsetting="true" enable="eq(-2,true)"/>
-		
 	</category>
 	<category label="32046">
 		<setting label="32050" type="bool" id="setPlaycountInPlot" default="true"/>

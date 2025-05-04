@@ -95,6 +95,10 @@ def router():
         list_final_directories(Locale.getString("mainmenu.song_genres"), AmvTrackerDao.getSongGenres(), "list_song_genre_amv", "DefaultMusicAlbums.png")
     elif 'list_song_genre_amv' == params['action']:
         list_amv(params['dirname'], AmvTrackerDao.getSongGenreAmvs(params['dirname']))
+    elif 'list_tags' == params['action']:
+        list_tag_directories(int(params['tagid']))
+    elif 'list_tag_amvs' == params['action']:
+        list_amv(params['tagname'], AmvTrackerDao.getTagAmvs(int(params['tagid']), params['tagname']))
 
 def icon_list_item(label: str, icon="", label2 = "") -> xbmcgui.ListItem:
     """
@@ -125,7 +129,18 @@ def list_root_dir():
     xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_animes"), icon_list_item(Locale.getString("mainmenu.anime_sources"), "DefaultTVShows.png"), True)
     xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_artists"), icon_list_item(Locale.getString("mainmenu.song_artists"), "DefaultArtist.png"), True)
     xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_song_genres"), icon_list_item(Locale.getString("mainmenu.song_genres"), "DefaultMusicAlbums.png"), True)
+    add_tag_dir_listing(2)
+    add_tag_dir_listing(3)
+    add_tag_dir_listing(4)
+    add_tag_dir_listing(5)
+    add_tag_dir_listing(6)
     xbmcplugin.endOfDirectory(HANDLE)
+
+def add_tag_dir_listing(tagId: int):
+    if xbmcplugin.getSetting(HANDLE, "showTag"+str(tagId)+"Filter") == "true":
+        tagName = AmvTrackerDao.getTagName(tagId)
+        if tagName != "":
+            xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_tags", tagid=tagId), icon_list_item(tagName, ""), True)
 
 def list_amv(category: str, amvList: AmvResultList):
     """
@@ -162,6 +177,20 @@ def list_final_directories(category: str, dirList: list, urlAction: str, icon: s
                 list_item.setLabel(row[0] + "  [LIGHT]("+str(row[1])+")[/LIGHT]")
                 list_item.setInfo("video", {"size": row[1]})
             xbmcplugin.addDirectoryItem(HANDLE, format_url(action=urlAction, dirname=row[0]), list_item, True)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+def list_tag_directories(tagId: int):
+    xbmcplugin.setPluginCategory(HANDLE, AmvTrackerDao.getTagName(tagId))
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL)
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_SIZE)
+    dirList = AmvTrackerDao.getTagList(tagId)
+    for row in dirList:
+        if row[0].strip():
+            list_item = icon_list_item(row[0])
+            if len(row) > 1:
+                list_item.setLabel(row[0] + "  [LIGHT]("+str(row[1])+")[/LIGHT]")
+                list_item.setInfo("video", {"size": row[1]})
+            xbmcplugin.addDirectoryItem(HANDLE, format_url(action="list_tag_amvs", tagid=tagId, tagname=row[0]), list_item, True)
     xbmcplugin.endOfDirectory(HANDLE)
 
 def build_list_item_from_amv(amv: Amv) -> xbmcgui.ListItem:

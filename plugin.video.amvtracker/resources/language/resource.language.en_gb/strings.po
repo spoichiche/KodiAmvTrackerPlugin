@@ -215,3 +215,23 @@ msgstr ""
 msgctxt "#32051"
 msgid "Playcount"
 msgstr ""
+
+msgctxt "#32052"
+msgid "Show tag 2 folder"
+msgstr ""
+
+msgctxt "#32053"
+msgid "Show tag 3 folder"
+msgstr ""
+
+msgctxt "#32054"
+msgid "Show tag 4 folder"
+msgstr ""
+
+msgctxt "#32055"
+msgid "Show tag 5 folder"
+msgstr ""
+
+msgctxt "#32056"
+msgid "Show tag 6 folder"
+msgstr ""
