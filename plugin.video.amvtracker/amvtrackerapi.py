@@ -238,7 +238,13 @@ class AmvTrackerDao(object):
                 for contest in row[0].split("\n"):
                     if not contest in contestSet:
                         contestSet.append(contest)
-                        res2 = cur.execute("SELECT COUNT(DISTINCT video_id) FROM sub_db_0 WHERE contests_entered LIKE ? AND local_file <> ''", ["%"+contest+"%"])
+                        res2 = cur.execute("SELECT COUNT(DISTINCT video_id) FROM sub_db_0 \
+                        WHERE local_file <> '' \
+                            AND (contests_entered = ? \
+	                            OR contests_entered LIKE (? || char(0x0a) || \"%\") \
+	                            OR contests_entered LIKE (\"%\" || char(0x0a) || ?) \
+	                            OR contests_entered LIKE (\"%\" || char(0x0a) || ? || char(0x0a) || \"%\"))"
+                        , [contest, contest, contest, contest])
                         amvCount = res2.fetchone()[0]
                         resultList.append((contest, amvCount))
             return resultList
@@ -246,7 +252,13 @@ class AmvTrackerDao(object):
     def getContestAmvs(contest: str) -> AmvResultList:
         with sqlite3.connect(AmvTrackerDao.dbFilePath) as con:
             cur = con.cursor()
-            res = cur.execute("SELECT " + AmvTrackerDao.getColumns() + " FROM sub_db_0 WHERE contests_entered LIKE ? AND local_file <> ''", ["%"+contest+"%"])
+            res = cur.execute("SELECT " + AmvTrackerDao.getColumns() + " FROM sub_db_0 \
+                WHERE local_file <> '' \
+                    AND (contests_entered = ? \
+                        OR contests_entered LIKE (? || char(0x0a) || \"%\") \
+                        OR contests_entered LIKE (\"%\" || char(0x0a) || ?) \
+                        OR contests_entered LIKE (\"%\" || char(0x0a) || ? || char(0x0a) || \"%\"))"
+                , [contest, contest, contest, contest])
             return AmvResultList(res.fetchall())
 
     def getAnimes() -> list:
