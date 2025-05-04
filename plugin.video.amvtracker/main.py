@@ -255,7 +255,7 @@ def get_amv_filepath(amvFilepath:str) -> str:
     @return: the complete file path
     """
     if xbmcplugin.getSetting(HANDLE, "doFilepathSubstitution") == "true":
-        amvFilepath.replace(xbmcplugin.getSetting(HANDLE, "filepathSubstitutionReplace"), xbmcplugin.getSetting(HANDLE, "filepathSubstitutionWith"))
+        amvFilepath = amvFilepath.replace(xbmcplugin.getSetting(HANDLE, "filepathSubstitutionReplace"), xbmcplugin.getSetting(HANDLE, "filepathSubstitutionWith"))
     return amvFilepath
 
     
